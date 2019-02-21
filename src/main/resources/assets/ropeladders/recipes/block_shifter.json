@@ -1,0 +1,20 @@
+{
+	"type": "forge:ore_shaped",
+	"pattern": [
+		"sts",
+		"s s",
+		"sts"
+	],
+	"key": {
+		"s": {
+			"item": "minecraft:stick"
+		},
+		"t": {
+			"item": "minecraft:string"
+		}
+	},
+	"result": {
+		"item": "ropeladders:rope_ladder",
+		"count": 4
+	}
+}

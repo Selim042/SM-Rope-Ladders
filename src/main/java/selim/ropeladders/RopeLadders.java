@@ -5,29 +5,24 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber
-@Mod(modid = RopeLadders.MODID, name = RopeLadders.NAME, version = RopeLadders.VERSION)
+@Mod(RopeLadders.MODID)
 public class RopeLadders {
 
 	public static final String MODID = "ropeladders";
 	public static final String NAME = "Rope Ladders";
 	public static final String VERSION = "2.0.0";
-	@Mod.Instance(value = MODID)
-	public static RopeLadders instance;
+	// @Mod.Instance(value = MODID)
+	// public static RopeLadders instance;
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 
 	@ObjectHolder(MODID)
@@ -51,21 +46,24 @@ public class RopeLadders {
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(
-				new ItemBlock(Blocks.ROPE_LADDER).setRegistryName(Blocks.ROPE_LADDER.getRegistryName()));
+		event.getRegistry().register(new ItemBlock(Blocks.ROPE_LADDER, new Item.Properties())
+				.setRegistryName(Blocks.ROPE_LADDER.getRegistryName()));
 	}
 
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public static void registerModels(ModelRegistryEvent event) {
-		ModelLoader.setCustomModelResourceLocation(Items.ROPE_LADDER, 0,
-				new ModelResourceLocation(Items.ROPE_LADDER.getRegistryName(), "inventory"));
+	// @OnlyIn(Dist.CLIENT)
+	// @SubscribeEvent
+	// public static void registerModels(ModelRegistryEvent event) {
+	// ModelLoader.setCustomModelResourceLocation(Items.ROPE_LADDER, 0,
+	// new ModelResourceLocation(Items.ROPE_LADDER.getRegistryName(),
+	// "inventory"));
+	// }
+
+	private void initClient(final FMLClientSetupEvent event) {
+		BlockDispenser.registerDispenseBehavior(Items.ROPE_LADDER, new RopeLadderBehavior());
 	}
 
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.ROPE_LADDER,
-				new RopeLadderBehavior());
+	private void initServer(final FMLDedicatedServerSetupEvent event) {
+		BlockDispenser.registerDispenseBehavior(Items.ROPE_LADDER, new RopeLadderBehavior());
 	}
 
 }

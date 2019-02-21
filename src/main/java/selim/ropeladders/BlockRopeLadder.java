@@ -1,31 +1,40 @@
 package selim.ropeladders;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 public class BlockRopeLadder extends BlockLadder {
 
 	public BlockRopeLadder() {
+		super(Block.Properties.create(Material.WOOD).hardnessAndResistance(0.0f));
 		this.setRegistryName(RopeLadders.MODID, "rope_ladder");
-		this.setUnlocalizedName(RopeLadders.MODID + ":rope_ladder");
-		this.setCreativeTab(CreativeTabs.DECORATIONS);
-		this.setHardness(0.0F);
-		this.blockResistance = 0;
-		this.lightOpacity = 0;
+		// this.setUnlocalizedName(RopeLadders.MODID + ":rope_ladder");
 	}
 
+	@Override
+	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+		if (group.equals(ItemGroup.DECORATIONS))
+			items.add(new ItemStack(this));
+	}
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn,
 			BlockPos neighbor) {
@@ -34,14 +43,14 @@ public class BlockRopeLadder extends BlockLadder {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing facing, float side, float hitX, float hitY) {
-		this.onNeighborChange((IBlockAccess) world, pos, pos);
+	public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+			EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+		this.neighborChanged(state, world, pos, this, pos);
 		if (!world.isRemote) {
 			if (!player.isSneaking()
 					&& player.inventory.hasItemStack(new ItemStack(RopeLadders.Items.ROPE_LADDER))) {
-				if (player.capabilities.isCreativeMode) {
-					this.placeLadder(world, pos, ItemStack.EMPTY);
+				if (player.isCreative()) {
+					this.placeLadder(world, pos, ItemStack.EMPTY, player);
 					return true;
 				}
 				ItemStack ladderStack = null;
@@ -53,7 +62,7 @@ public class BlockRopeLadder extends BlockLadder {
 					}
 				}
 				if (ladderStack != null) {
-					this.placeLadder(world, pos, ladderStack);
+					this.placeLadder(world, pos, ladderStack, player);
 					return true;
 				}
 			} else if (player.isSneaking()) {
@@ -69,12 +78,14 @@ public class BlockRopeLadder extends BlockLadder {
 		return true;
 	}
 
-	public void placeLadder(World world, BlockPos pos, ItemStack ladderStack) {
+	public void placeLadder(World world, BlockPos pos, ItemStack ladderStack,
+			@Nullable EntityPlayer player) {
 		int i = 1;
 		while (true) {
 			BlockPos newPos = pos.add(0, -i, 0);
-			if (world.isAirBlock(newPos)
-					|| world.getBlockState(newPos).getBlock().isReplaceable(world, newPos)) {
+			// EnumFacing facing = world.getBlockState(pos.)
+			if (world.isAirBlock(newPos) || world.getBlockState(newPos).isReplaceable(
+					new BlockItemUseContext(world, player, ladderStack, pos, null, 0, 0, 0))) {
 				if (!ladderStack.isEmpty()) {
 					ladderStack.shrink(1);
 					world.setBlockState(newPos, world.getBlockState(pos));
@@ -92,7 +103,7 @@ public class BlockRopeLadder extends BlockLadder {
 		while (true) {
 			BlockPos newPos = pos.add(0, -i, 0);
 			if (!world.getBlockState(newPos).getBlock().equals(RopeLadders.Blocks.ROPE_LADDER)) {
-				world.setBlockToAir(newPos.add(0, 1, 0));
+				world.removeBlock(newPos.add(0, 1, 0));
 				break;
 			}
 			i++;
@@ -100,21 +111,21 @@ public class BlockRopeLadder extends BlockLadder {
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX,
-			float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public IBlockState getStateForPlacement(IBlockState state, EnumFacing facing, IBlockState state2,
+			IWorld world, BlockPos pos1, BlockPos pos2, EnumHand hand) {
 		if (facing.getAxis().isHorizontal()
-				&& this.canAttachTo(world, pos.offset(facing.getOpposite()), facing))
-			return this.getDefaultState().withProperty(FACING, facing);
+				&& this.canAttachTo(world, pos1.offset(facing.getOpposite()), facing))
+			return this.getDefaultState().with(FACING, facing);
 		else {
 			for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-				if (this.canAttachTo(world, pos.offset(enumfacing.getOpposite()), enumfacing))
-					return this.getDefaultState().withProperty(FACING, enumfacing);
+				if (this.canAttachTo(world, pos1.offset(enumfacing.getOpposite()), enumfacing))
+					return this.getDefaultState().with(FACING, enumfacing);
 
 			return this.getDefaultState();
 		}
 	}
 
-	private boolean canAttachTo(World world, BlockPos pos, EnumFacing facing) {
+	private boolean canAttachTo(IBlockReader world, BlockPos pos, EnumFacing facing) {
 		IBlockState iblockstate = world.getBlockState(pos);
 		boolean flag = isExceptBlockForAttachWithPiston(iblockstate.getBlock());
 		return !flag && iblockstate.getBlockFaceShape(world, pos, facing) == BlockFaceShape.SOLID

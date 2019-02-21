@@ -19,7 +19,7 @@ public class RopeLadderBehavior implements IBehaviorDispenseItem {
 			return stack;
 		World world = source.getWorld();
 		BlockPos dispPos = source.getBlockPos();
-		EnumFacing facing = state.getValue(BlockDispenser.FACING);
+		EnumFacing facing = state.get(BlockDispenser.FACING);
 		BlockPos ladderPos = dispPos.offset(facing);
 		IBlockState ladderState = world.getBlockState(ladderPos);
 		if (!(ladderState.getBlock() instanceof BlockRopeLadder))
@@ -29,7 +29,7 @@ public class RopeLadderBehavior implements IBehaviorDispenseItem {
 			stack.grow(1);
 			RopeLadders.Blocks.ROPE_LADDER.retractLadder(source.getWorld(), ladderPos);
 		} else
-			RopeLadders.Blocks.ROPE_LADDER.placeLadder(source.getWorld(), ladderPos, stack);
+			RopeLadders.Blocks.ROPE_LADDER.placeLadder(source.getWorld(), ladderPos, stack, null);
 		return stack;
 	}
 

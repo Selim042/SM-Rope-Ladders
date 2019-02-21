@@ -45,7 +45,7 @@ Adds rope ladders that can be dropped from above.
 '''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.selim_enchants]] #optional
+[[dependencies.ropeladders]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -57,7 +57,7 @@ Adds rope ladders that can be dropped from above.
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.selim_enchants]]
+[[dependencies.ropeladders]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.13.2]"

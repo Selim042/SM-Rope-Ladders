@@ -1,8 +1,8 @@
 {
     "variants": {
-        "facing=north": { "model": "ropeladders:rope_ladder" },
-        "facing=east":  { "model": "ropeladders:rope_ladder", "y": 90 },
-        "facing=south": { "model": "ropeladders:rope_ladder", "y": 180 },
-        "facing=west":  { "model": "ropeladders:rope_ladder", "y": 270 }
+        "facing=north": { "model": "ropeladders:block/rope_ladder" },
+        "facing=east":  { "model": "ropeladders:block/rope_ladder", "y": 90 },
+        "facing=south": { "model": "ropeladders:block/rope_ladder", "y": 180 },
+        "facing=west":  { "model": "ropeladders:block/rope_ladder", "y": 270 }
     }
 }

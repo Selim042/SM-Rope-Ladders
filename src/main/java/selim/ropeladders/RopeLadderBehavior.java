@@ -29,7 +29,8 @@ public class RopeLadderBehavior implements IBehaviorDispenseItem {
 			stack.grow(1);
 			RopeLadders.Blocks.ROPE_LADDER.retractLadder(source.getWorld(), ladderPos);
 		} else
-			RopeLadders.Blocks.ROPE_LADDER.placeLadder(source.getWorld(), ladderPos, stack, null);
+			RopeLadders.Blocks.ROPE_LADDER.placeLadder(source.getWorld(), ladderPos, stack, null,
+					facing.getOpposite());
 		return stack;
 	}
 

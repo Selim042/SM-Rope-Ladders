@@ -50,7 +50,7 @@ public class BlockRopeLadder extends BlockLadder {
 			if (!player.isSneaking()
 					&& player.inventory.hasItemStack(new ItemStack(RopeLadders.Items.ROPE_LADDER))) {
 				if (player.isCreative()) {
-					this.placeLadder(world, pos, ItemStack.EMPTY, player);
+					this.placeLadder(world, pos, ItemStack.EMPTY, player, side);
 					return true;
 				}
 				ItemStack ladderStack = null;
@@ -62,7 +62,7 @@ public class BlockRopeLadder extends BlockLadder {
 					}
 				}
 				if (ladderStack != null) {
-					this.placeLadder(world, pos, ladderStack, player);
+					this.placeLadder(world, pos, ladderStack, player, side);
 					return true;
 				}
 			} else if (player.isSneaking()) {
@@ -79,13 +79,13 @@ public class BlockRopeLadder extends BlockLadder {
 	}
 
 	public void placeLadder(World world, BlockPos pos, ItemStack ladderStack,
-			@Nullable EntityPlayer player) {
+			@Nullable EntityPlayer player, EnumFacing facing) {
 		int i = 1;
 		while (true) {
 			BlockPos newPos = pos.add(0, -i, 0);
 			// EnumFacing facing = world.getBlockState(pos.)
 			if (world.isAirBlock(newPos) || world.getBlockState(newPos).isReplaceable(
-					new BlockItemUseContext(world, player, ladderStack, pos, null, 0, 0, 0))) {
+					new BlockItemUseContext(world, player, ladderStack, pos, facing, 0, 0, 0))) {
 				if (!ladderStack.isEmpty()) {
 					ladderStack.shrink(1);
 					world.setBlockState(newPos, world.getBlockState(pos));

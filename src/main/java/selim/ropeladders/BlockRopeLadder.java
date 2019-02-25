@@ -86,11 +86,14 @@ public class BlockRopeLadder extends BlockLadder {
 			// EnumFacing facing = world.getBlockState(pos.)
 			if (world.isAirBlock(newPos) || world.getBlockState(newPos).isReplaceable(
 					new BlockItemUseContext(world, player, ladderStack, pos, facing, 0, 0, 0))) {
+				boolean waterlogged = world.hasWater(newPos);
 				if (!ladderStack.isEmpty()) {
 					ladderStack.shrink(1);
-					world.setBlockState(newPos, world.getBlockState(pos));
+					world.setBlockState(newPos,
+							world.getBlockState(pos).with(BlockRopeLadder.WATERLOGGED, waterlogged));
 				} else
-					world.setBlockState(newPos, world.getBlockState(pos));
+					world.setBlockState(newPos,
+							world.getBlockState(pos).with(BlockRopeLadder.WATERLOGGED, waterlogged));
 				break;
 			} else if (!world.getBlockState(newPos).getBlock().equals(RopeLadders.Blocks.ROPE_LADDER))
 				break;

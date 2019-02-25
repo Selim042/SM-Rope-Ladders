@@ -1,5 +1,5 @@
 {
-	"type": "forge:ore_shaped",
+	"type": "crafting_shaped",
 	"pattern": [
 		"sts",
 		"s s",

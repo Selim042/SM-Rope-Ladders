@@ -17,8 +17,6 @@ import net.minecraftforge.registries.ObjectHolder;
 public class RopeLadders {
 
 	public static final String MODID = "ropeladders";
-	public static final String NAME = "Rope Ladders";
-	public static final String VERSION = "2.0.0";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 
 	@ObjectHolder(MODID)
